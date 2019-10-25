@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- JJB: this is a sanity check that POST is working for CHROME c-->
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+// credit to https://www.w3schools.com/jquery/ajax_post.asp
+$.ajax({
+    url: 'http://localhost:4077/play',
+    dataType: 'json',
+    type: 'post',
+    contentType: 'application/json',
+    data: JSON.stringify( { "player": 4 } ),
+    processData: false,
+    success: function( data, textStatus, jQxhr ){
+        $('#response pre').html( JSON.stringify( data ) );
+
+        // credit to https://api.jquery.com/appendTo/
+        $('<p>' + JSON.stringify( data ) + '</p>').appendTo(".results");
+    },
+    error: function( jqXhr, textStatus, errorThrown ){
+        console.log( errorThrown );
+    }
+});
+
+</script>
+</head>
+<body>
+<!-- credit to https://api.jquery.com/appendTo/ -->
+
+<div class="results">Results: </div>
+</body>
+</html>

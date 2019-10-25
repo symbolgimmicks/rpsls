@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strconv"
 
+	handlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -16,6 +17,11 @@ import (
 type Choice struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+// PlayerChoice - for deseraliazing player post data.
+type PlayerChoice struct {
+	Player int `json:"player"`
 }
 
 // Game - object - in case of multiple
@@ -81,18 +87,20 @@ func onGetSingleChoice(w http.ResponseWriter, r *http.Request) {
 }
 
 func onPlay(w http.ResponseWriter, r *http.Request) {
+	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
+	// Show the name of where we are in the io - intended for debug but how?
+	pc, _, _, _ := runtime.Caller(0)
+	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+
 	// get the body of our POST request
 	// return the string response containing the request body
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	var playerChoice int
+	var playerChoice PlayerChoice
 	json.Unmarshal(reqBody, &playerChoice)
-	// TODO: who wins?
-	results := Result{"win", 1, 2}
-	json.NewEncoder(w).Encode(results)
 
-	// Echo back what was sent, for now...
-	// Update to the results when we have that part.
-	fmt.Fprintf(w, "%+v", string(reqBody))
+	// TODO: who wins...
+	results := Result{"win", playerChoice.Player, 2}
+	json.NewEncoder(w).Encode(results)
 }
 
 func handleRequests() {
@@ -106,7 +114,18 @@ func handleRequests() {
 	router.HandleFunc("/choices", onGetChoices)
 	router.HandleFunc("/choices/{id:[0-9]+}", onGetSingleChoice)
 	router.HandleFunc("/play", onPlay).Methods("POST")
-	log.Fatal(http.ListenAndServe(":4077", router))
+
+	//https: //stackoverflow.com/questions/40985920/making-golang-gorilla-cors-handler-work
+	//JJB - this was not intuitive or helpful
+	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	// originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
+	// methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	//https: //www.thepolyglotdeveloper.com/2017/10/handling-cors-golang-web-application/
+	// JJB - I do not understand CORS. I just understand it was in my way of testing the server and host on the same machine (I think...)
+	// Yes.  That's M*A*S*H*
+	log.Fatal(http.ListenAndServe(":4077", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
+
 }
 
 func main() {
