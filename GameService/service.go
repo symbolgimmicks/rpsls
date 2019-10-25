@@ -103,6 +103,19 @@ func onPlay(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(results)
 }
 
+func onGetRandomChoice(w http.ResponseWriter, r *http.Request) {
+	pc, _, _, _ := runtime.Caller(0)
+	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var playerChoice PlayerChoice
+	json.Unmarshal(reqBody, &playerChoice)
+
+	// TODO: who wins...
+	results := Result{"win", playerChoice.Player, 2}
+	json.NewEncoder(w).Encode(results)
+}
+
 func handleRequests() {
 	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
 	// Show the name of where we are in the io - intended for debug but how?
@@ -110,16 +123,13 @@ func handleRequests() {
 	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
 
 	router := mux.NewRouter().StrictSlash(true)
-	// router.HandleFunc("/", onHome) // Not needed...
-	router.HandleFunc("/choices", onGetChoices)
-	router.HandleFunc("/choices/{id:[0-9]+}", onGetSingleChoice)
-	router.HandleFunc("/play", onPlay).Methods("POST")
 
-	//https: //stackoverflow.com/questions/40985920/making-golang-gorilla-cors-handler-work
-	//JJB - this was not intuitive or helpful
-	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-	// originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
-	// methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	// router.HandleFunc("/", onHome) // Not needed... or can A UI live here...?
+
+	router.HandleFunc("/play", onPlay).Methods("POST")
+	router.HandleFunc("/choices/{id:[0-9]+}", onGetSingleChoice)
+	router.HandleFunc("/choice", onGetRandomChoice).Methods("GET")
+	router.HandleFunc("/choices", onGetChoices).Methods("GET")
 
 	//https: //www.thepolyglotdeveloper.com/2017/10/handling-cors-golang-web-application/
 	// JJB - I do not understand CORS. I just understand it was in my way of testing the server and host on the same machine (I think...)
