@@ -46,30 +46,30 @@ var Choices = []Choice{
 	{5, "Spock"},
 }
 
-func onHome(w http.ResponseWriter, r *http.Request) {
+func consoleLogEndpointHit(funcName string) {
 	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
 	// Show the name of where we are in the io - intended for debug but how?
+	fmt.Println("Endpoint Hit: " + funcName)
+}
+
+func onHome(w http.ResponseWriter, r *http.Request) {
 	pc, _, _, _ := runtime.Caller(0)
-	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+	consoleLogEndpointHit(runtime.FuncForPC(pc).Name())
 
 	// Setup the body
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 }
 
 func onGetChoices(w http.ResponseWriter, r *http.Request) {
-	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
-	// Show the name of where we are in the io - intended for debug but how?
 	pc, _, _, _ := runtime.Caller(0)
-	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+	consoleLogEndpointHit(runtime.FuncForPC(pc).Name())
 
 	json.NewEncoder(w).Encode(Choices)
 }
 
 func onGetSingleChoice(w http.ResponseWriter, r *http.Request) {
-	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
-	// Show the name of where we are in the io - intended for debug but how?
 	pc, _, _, _ := runtime.Caller(0)
-	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+	consoleLogEndpointHit(runtime.FuncForPC(pc).Name())
 
 	vars := mux.Vars(r)
 	sKey := vars["id"]
@@ -87,13 +87,9 @@ func onGetSingleChoice(w http.ResponseWriter, r *http.Request) {
 }
 
 func onPlay(w http.ResponseWriter, r *http.Request) {
-	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
-	// Show the name of where we are in the io - intended for debug but how?
 	pc, _, _, _ := runtime.Caller(0)
-	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+	consoleLogEndpointHit(runtime.FuncForPC(pc).Name())
 
-	// get the body of our POST request
-	// return the string response containing the request body
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var playerChoice PlayerChoice
 	json.Unmarshal(reqBody, &playerChoice)
@@ -107,29 +103,26 @@ func onGetRandomChoice(w http.ResponseWriter, r *http.Request) {
 	pc, _, _, _ := runtime.Caller(0)
 	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	var playerChoice PlayerChoice
-	json.Unmarshal(reqBody, &playerChoice)
+	var response Choice
+	response = Choices[3]
 
-	// TODO: who wins...
-	results := Result{"win", playerChoice.Player, 2}
-	json.NewEncoder(w).Encode(results)
+	json.NewEncoder(w).Encode(response)
 }
 
 func handleRequests() {
-	//https://stackoverflow.com/questions/10742749/get-name-of-function-using-reflection-in-golang/41672632
-	// Show the name of where we are in the io - intended for debug but how?
 	pc, _, _, _ := runtime.Caller(0)
-	fmt.Println("Endpoint Hit: " + runtime.FuncForPC(pc).Name())
+	consoleLogEndpointHit(runtime.FuncForPC(pc).Name())
 
 	router := mux.NewRouter().StrictSlash(true)
 
 	// router.HandleFunc("/", onHome) // Not needed... or can A UI live here...?
 
-	router.HandleFunc("/play", onPlay).Methods("POST")
 	router.HandleFunc("/choices/{id:[0-9]+}", onGetSingleChoice)
+
 	router.HandleFunc("/choice", onGetRandomChoice).Methods("GET")
 	router.HandleFunc("/choices", onGetChoices).Methods("GET")
+
+	router.HandleFunc("/play", onPlay).Methods("POST")
 
 	//https: //www.thepolyglotdeveloper.com/2017/10/handling-cors-golang-web-application/
 	// JJB - I do not understand CORS. I just understand it was in my way of testing the server and host on the same machine (I think...)

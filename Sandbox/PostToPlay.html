@@ -14,8 +14,6 @@ $.ajax({
     data: JSON.stringify( { "player": 4 } ),
     processData: false,
     success: function( data, textStatus, jQxhr ){
-        $('#response pre').html( JSON.stringify( data ) );
-
         // credit to https://api.jquery.com/appendTo/
         $('<p>' + JSON.stringify( data ) + '</p>').appendTo(".results");
     },
@@ -24,11 +22,24 @@ $.ajax({
     }
 });
 
+$.ajax({
+    url: 'http://localhost:4077/choice',
+    dataType: 'json',
+    type: 'GET',
+    contentType: 'application/json',
+    processData: false,
+    success: function( data, textStatus, jQxhr ){
+        $('<p>' + JSON.stringify( data ) + '</p>').appendTo(".random");
+    },
+    error: function( jqXhr, textStatus, errorThrown ){
+        console.log( errorThrown );
+    }
+});
 </script>
 </head>
 <body>
 <!-- credit to https://api.jquery.com/appendTo/ -->
-
-<div class="results">Results: </div>
+<div class="results">Play Results:</div>
+<div class="random">Choice Results:</div>
 </body>
 </html>
