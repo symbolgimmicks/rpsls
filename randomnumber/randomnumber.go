@@ -1,6 +1,5 @@
 package randomnumber
 
-//https://www.callicoder.com/golang-packages/
 import (
 	"encoding/json"
 	"fmt"
@@ -8,8 +7,6 @@ import (
 	"time"
 )
 
-//https://stackoverflow.com/questions/17156371/how-to-get-json-response-from-http-get
-// JJB - default client does not have a timeout so you probably don't want to use it on purpose.
 var myClient = &http.Client{Timeout: 10 * time.Second}
 
 // Min - The minimum value Generate will give.  From specification for 3rd party service.
@@ -35,9 +32,6 @@ func Generate() int {
 	}
 	defer getResponse.Body.Close()
 
-	//https://stackoverflow.com/questions/26744873/converting-map-to-struct
-
-	//go get github.com/mitchellh/mapstructure - is this required?
 	err2 := json.NewDecoder(getResponse.Body).Decode(&data)
 	if err2 != nil {
 		fmt.Println("err2: ", err2.Error())
