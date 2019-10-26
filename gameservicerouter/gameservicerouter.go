@@ -9,7 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/symbolgimmicks/rpsls/choice"
-	"github.com/symbolgimmicks/rpsls/randomnumber"
 )
 
 // PlayerChoice - for deseraliazing player post data.
@@ -26,7 +25,6 @@ type Result struct {
 
 // OnGetChoices - returns all Choices
 func OnGetChoices(w http.ResponseWriter, r *http.Request) {
-
 	json.NewEncoder(w).Encode(choice.Choices)
 }
 
@@ -52,7 +50,7 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var playerChoice PlayerChoice
 	json.Unmarshal(reqBody, &playerChoice)
-	var computerChoice choice.Choice = choice.IntToChoice(randomnumber.Generate())
+	var computerChoice choice.Choice = choice.GenerateRandom()
 
 	// TODO: figure out who actually wins...
 
@@ -62,6 +60,6 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 
 // OnGetRandomChoice - Picks a choice
 func OnGetRandomChoice(w http.ResponseWriter, r *http.Request) {
-	var response choice.Choice = choice.IntToChoice(randomnumber.Generate())
+	var response choice.Choice = choice.GenerateRandom()
 	json.NewEncoder(w).Encode(response)
 }
