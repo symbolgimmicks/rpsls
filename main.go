@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"log"
 	"net/http"
 
@@ -10,29 +10,30 @@ import (
 	"github.com/symbolgimmicks/rpsls/gameservicerouter"
 )
 
-func onHome(w http.ResponseWriter, r *http.Request) {
-	// Setup the body
-	fmt.Fprintf(w, "JJB")
-}
-
 func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 
-	// router.HandleFunc("/", onHome) // Not needed... or can A UI live here...?
+	//https://www.alexedwards.net/blog/serving-static-sites-with-go
+	// JJB - Let the home page be the test page?  Sure, for now.
+	// that approach didn't work with gorilla (need to learn the basics later though...)
+	// So instead trying this approach...
+	//https://github.com/gorilla/mux#static-files
+	var dir string
+	flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
+	flag.Parse()
+	router.PathPrefix("/Sandbox/").Handler(http.StripPrefix("/Sandbox/", http.FileServer(http.Dir(dir))))
 
-	router.HandleFunc("/choices/{id:[0-9]+}", gameservicerouter.OnGetChoices)
-
+	router.HandleFunc("/choices/{id:[0-9]+}", gameservicerouter.OnGetSingleChoice)
 	router.HandleFunc("/choice", gameservicerouter.OnGetRandomChoice).Methods("GET")
 	router.HandleFunc("/choices", gameservicerouter.OnGetChoices).Methods("GET")
-
 	router.HandleFunc("/play", gameservicerouter.OnPlay).Methods("POST")
 
 	//https: //www.thepolyglotdeveloper.com/2017/10/handling-cors-golang-web-application/
-	// JJB - I do not understand CORS. I just understand it was in my way of testing the server and host on the same machine (I think...)
-	// Yes.  That's M*A*S*H*
-	log.Fatal(http.ListenAndServe(":4077", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
-
-	// JJB - Learn this [https://github.com/gorilla/mux#handling-cors-requests] because it explains how to do CORS without that handlers lib.
+	//https://golang.org/pkg/net/http/
+	//https://gist.github.com/denji/12b3a568f092ab951456
+	//https://stackoverflow.com/questions/50625283/how-to-install-openssl-in-windows-10
+	//https://golangcode.com/basic-https-server-with-certificate/
+	log.Fatal(http.ListenAndServeTLS(":4077", "rpsls-server.crt", "rpsls-server.key", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 }
 
 func main() {

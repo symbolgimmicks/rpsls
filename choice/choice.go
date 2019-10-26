@@ -61,6 +61,12 @@ var Min = 1
 // Max - Maximum valid choice index
 var Max = 5
 
+// ValidChoices - returns the choices available for user selection.
+func ValidChoices() []Choice {
+	var result = Choices[Min:]
+	return result
+}
+
 // GenerateRandom - Returns a randomn Choice.  Will return Empty if random generation fails.
 func GenerateRandom() Choice {
 	var roll int = rand.Generate()

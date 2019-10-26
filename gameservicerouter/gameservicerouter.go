@@ -25,7 +25,9 @@ type Result struct {
 
 // OnGetChoices - returns all Choices
 func OnGetChoices(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(choice.Choices)
+	var results = choice.ValidChoices()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(&results)
 }
 
 // OnGetSingleChoice - returns the value of a given choice ID
@@ -33,15 +35,23 @@ func OnGetSingleChoice(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sKey := vars["id"]
 	iKey, err := strconv.ParseInt(sKey, 10, 32)
-
+	var found bool = false
 	if err != nil {
 		fmt.Fprintf(w, "Key: "+sKey)
 		fmt.Fprintf(w, "<!-- "+err.Error()+" -->")
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+
 	for _, item := range choice.Choices {
 		if item.ID == int(iKey) {
 			json.NewEncoder(w).Encode(item)
+			found = true
+			break
 		}
+	}
+	if found == false {
+		json.NewEncoder(w).Encode(choice.Choices[0])
 	}
 }
 
@@ -63,10 +73,12 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := Result{strResult, playerChoice.Player, computerChoice.ID}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results)
 }
 
 // OnGetRandomChoice - Picks a choice
 func OnGetRandomChoice(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(choice.GenerateRandom())
 }
