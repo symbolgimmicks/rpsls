@@ -52,14 +52,21 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &playerChoice)
 	var computerChoice choice.Choice = choice.GenerateRandom()
 
-	// TODO: figure out who actually wins...
+	var roundResult int = choice.Evaluate(choice.Choices[playerChoice.Player], computerChoice)
+	var strResult string
+	if roundResult == -1 {
+		strResult = "win"
+	} else if roundResult == 0 {
+		strResult = "tie"
+	} else {
+		strResult = "lose"
+	}
 
-	results := Result{"win", playerChoice.Player, computerChoice.ID}
+	results := Result{strResult, playerChoice.Player, computerChoice.ID}
 	json.NewEncoder(w).Encode(results)
 }
 
 // OnGetRandomChoice - Picks a choice
 func OnGetRandomChoice(w http.ResponseWriter, r *http.Request) {
-	var response choice.Choice = choice.GenerateRandom()
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(choice.GenerateRandom())
 }
