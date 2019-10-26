@@ -5,20 +5,15 @@ rpsls (Rock Paper Scissors Lizard Spock) is a Golang REST API learning adventure
 ## Installation
 
 1. Install & Configure Golang
-
-https://golang.org/doc/install
-https://golang.org/wiki/SettingGOPATH
-
+- https://golang.org/doc/install
+- https://golang.org/wiki/SettingGOPATH
 2. Validate your installation works
-
-3. Go get gorilla/mut and gorilla/handler
+3. Go get rpsls
 ``` bash
-go get https://github.com/gorilla/mux#install
-go get https://github.com/gorilla/handler#install
+go get https://github.com/symbolgimmicks/rpsls
 ```
-4. Clone https://github.com/symbolgimmicks/rpsls into %GOPATH$%/src/github.com/symbolgimmicks/rpsls
-5. Using openssl create TSL keys
-See https://golangcode.com/basic-https-server-with-certificate/ for an example on how to generate a self-signed key.
+4. Using openssl create TSL keys
+- See https://golangcode.com/basic-https-server-with-certificate/ for an example on how to generate a self-signed key.
 
 ## Usage
 The application attempts to host on port 4077 and is intended to provide the following REST API:
