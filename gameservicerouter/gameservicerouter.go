@@ -52,7 +52,7 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var playerChoice PlayerChoice
 	json.Unmarshal(reqBody, &playerChoice)
-	var computerChoice choice.Choice = choice.IntToChoice(randomnumber.Roll1To100())
+	var computerChoice choice.Choice = choice.IntToChoice(randomnumber.Generate())
 
 	// TODO: figure out who actually wins...
 
@@ -62,6 +62,6 @@ func OnPlay(w http.ResponseWriter, r *http.Request) {
 
 // OnGetRandomChoice - Picks a choice
 func OnGetRandomChoice(w http.ResponseWriter, r *http.Request) {
-	var response choice.Choice = choice.IntToChoice(randomnumber.Roll1To100())
+	var response choice.Choice = choice.IntToChoice(randomnumber.Generate())
 	json.NewEncoder(w).Encode(response)
 }

@@ -12,14 +12,19 @@ import (
 // JJB - default client does not have a timeout so you probably don't want to use it on purpose.
 var myClient = &http.Client{Timeout: 10 * time.Second}
 
+// Min - The minimum value Generate will give.  From specification for 3rd party service.
+var Min int = 1
+
+// Max - The maximum value Generate will give.  From specification for 3rd party service.
+var Max int = 100
+
 // RandomNumber - expected response from [https://codechallenge.boohma.com/random]
 type randomNumber struct {
 	RandomNumber int `json:"random_number"`
 }
 
-// Roll1To100 requests a number between 1 and 100 from
-// the third-party endpoint "https://codechallenge.boohma.com/random"
-func Roll1To100() int {
+// Generate - generate a number between Min and Max
+func Generate() int {
 
 	data := &randomNumber{}
 
