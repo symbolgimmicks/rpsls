@@ -17,7 +17,8 @@ go get https://github.com/symbolgimmicks/rpsls
 
 ## Testing
 - Utilizes the official Cucumber BDD framework for Golang https://github.com/DATA-DOG/godog
-Test coverage
+
+### Test coverage
 - [x] randomnumber testing
 - [x] choice testing
 - [ ] gameservicerouter testing (stubbed, 50% done)
