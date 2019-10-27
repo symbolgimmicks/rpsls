@@ -1,6 +1,8 @@
 package choice
 
 import (
+	"log"
+
 	RNG "github.com/symbolgimmicks/rpsls/randomnumber"
 )
 
@@ -70,10 +72,13 @@ func ValidChoices() []Choice {
 // GenerateRandom - Returns a randomn Choice.  Will return Empty if random generation fails.
 func GenerateRandom() Choice {
 	var roll RNG.RandomNumber = RNG.RandomNumber{Value: -1}
-	roll.GenerateFromService(RNG.DefaultRNGServiceURL)
 	var index int = 0
-	if roll.IsValid() {
-		index = Min + (((roll.Value - RNG.Min) / (100 / (Max - Min + 1))) % Max)
+	if err := roll.GenerateFromService(RNG.DefaultRNGServiceURL); err == nil {
+		if roll.IsValid() {
+			index = Min + (((roll.Value - RNG.Min) / (100 / (Max - Min + 1))) % Max)
+		}
+	} else {
+		log.Print("Failed to generate number from service: ", err)
 	}
 	return Choices[index]
 }

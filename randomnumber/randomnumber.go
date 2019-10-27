@@ -25,37 +25,45 @@ type RandomNumber struct {
 }
 
 // IsValid - useable?
-func (r RandomNumber) IsValid() bool {
-	if r.Value > Max || r.Value < Min {
-		return false
-	}
-	return true
+func (r RandomNumber) IsValid() (answer bool) {
+	answer = !(r.Value > Max || r.Value < Min)
+	return
 }
 
 // GenerateFromService - rolls using a service
-func (r *RandomNumber) GenerateFromService(url string) {
-	getResponse, err := myClient.Get(url)
-	if err != nil {
-		fmt.Println("failed: ", err)
+func (r *RandomNumber) GenerateFromService(url string) (err error) {
+	err = nil
+	if getResponse, err := myClient.Get(url); err != nil {
+		fmt.Printf("woops: %v", err)
 		r.Value = -1
 	} else {
+		// https://github.com/DATA-DOG/godog/blob/master/examples/db/api_test.go
+		// handle panic
+		defer func() {
+			switch t := recover().(type) {
+			case string:
+				err = fmt.Errorf(t)
+			case error:
+				err = t
+			}
+		}()
+
 		defer getResponse.Body.Close()
-		err2 := json.NewDecoder(getResponse.Body).Decode(&r)
-		if err2 != nil {
-			fmt.Println("failed: ", err2)
+		if err := json.NewDecoder(getResponse.Body).Decode(&r); err != nil {
 			r.Value = -2
 		}
 	}
+	return
 }
 
 // GenerateFromService - Rolls using a custom service
-func GenerateFromService(url string) RandomNumber {
-	data := RandomNumber{Value: Min}
+func GenerateFromService(url string) (data RandomNumber, err error) {
+	data = RandomNumber{Value: Min}
 	fmt.Println("get from: ", url)
 	if url == "" {
-		data.GenerateFromService(DefaultRNGServiceURL)
+		err = data.GenerateFromService(DefaultRNGServiceURL)
 	} else {
-		data.GenerateFromService(url)
+		err = data.GenerateFromService(url)
 	}
-	return data
+	return
 }
