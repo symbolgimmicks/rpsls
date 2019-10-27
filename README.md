@@ -17,10 +17,11 @@ go get https://github.com/symbolgimmicks/rpsls
 
 ## Testing
 - Utilizes the official Cucumber BDD framework for Golang https://github.com/DATA-DOG/godog
-[x] randomnumber testing
-[x] choice testing
-[ ] gameservicerouter testing (stubbed, 50% done)
-[ ] main testing
+Test coverage
+- [x] randomnumber testing
+- [x] choice testing
+- [ ] gameservicerouter testing (stubbed, 50% done)
+- [ ] main testing
 
 ## Usage
 The application attempts to host on port 4077 and is intended to provide the following REST API:
