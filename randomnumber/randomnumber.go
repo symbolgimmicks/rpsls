@@ -34,7 +34,6 @@ func (r RandomNumber) IsValid() (answer bool) {
 func (r *RandomNumber) GenerateFromService(url string) (err error) {
 	err = nil
 	if getResponse, err := myClient.Get(url); err != nil {
-		fmt.Printf("woops: %v", err)
 		r.Value = -1
 	} else {
 		// https://github.com/DATA-DOG/godog/blob/master/examples/db/api_test.go

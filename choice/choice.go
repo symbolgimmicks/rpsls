@@ -1,11 +1,12 @@
 package choice
 
 import (
-	"log"
+	"fmt"
 
 	RNG "github.com/symbolgimmicks/rpsls/randomnumber"
 )
 
+var empty int = 0
 var rock int = 1
 var paper int = 2
 var scissors int = 3
@@ -47,9 +48,16 @@ func (lhs Choice) beats(rhs Choice) bool {
 	return true
 }
 
+// GamePlayResults - Map of results from Evaluate.
+var GamePlayResults = map[int]string{
+	-1: "win",
+	0:  "tie",
+	1:  "lose",
+}
+
 // Choices - users can only select these, although Empty isn't intended for usage.
 var Choices = []Choice{
-	{0, "Empty"},           // Null
+	{empty, "Empty"},       // Null
 	{rock, "Rock"},         // Crushes Lizard, Crushes Scissors
 	{paper, "Paper"},       // Covers Rock, Disproves Spock
 	{scissors, "Scissors"}, // Cut paper, Decaptitates Lizard
@@ -65,22 +73,29 @@ var Max = 5
 
 // ValidChoices - returns the choices available for user selection.
 func ValidChoices() []Choice {
-	var result = Choices[Min:]
-	return result
+	return Choices[Min:]
+}
+
+// EmptyChoice - the null choice
+var EmptyChoice Choice = Choices[0]
+
+func convertRollToIndex(roll RNG.RandomNumber) (index int) {
+	return Min + (((roll.Value - RNG.Min) / (100 / (Max - Min + 1))) % Max)
 }
 
 // GenerateRandom - Returns a randomn Choice.  Will return Empty if random generation fails.
-func GenerateRandom() Choice {
-	var roll RNG.RandomNumber = RNG.RandomNumber{Value: -1}
-	var index int = 0
+func GenerateRandom() (answer Choice, err error) {
+	answer = Choices[empty]
+	roll := RNG.RandomNumber{Value: 0}
 	if err := roll.GenerateFromService(RNG.DefaultRNGServiceURL); err == nil {
 		if roll.IsValid() {
-			index = Min + (((roll.Value - RNG.Min) / (100 / (Max - Min + 1))) % Max)
+			index := convertRollToIndex(roll)
+			answer = Choices[index]
 		}
 	} else {
-		log.Print("Failed to generate number from service: ", err)
+		err = fmt.Errorf("Failed to generate number from service: %v", err)
 	}
-	return Choices[index]
+	return
 }
 
 // Evaluate - returns the result of playing two choices.
@@ -95,4 +110,15 @@ func Evaluate(lhs Choice, rhs Choice) int {
 		return -1
 	}
 	return 1
+}
+
+// EvaluationAsString - Converts the value of Evalute into  a string
+func EvaluationAsString(value int) (answer string, err error) {
+	err = nil
+	answer = "unknown"
+	var ok bool = false
+	if answer, ok = GamePlayResults[value]; !ok {
+		err = fmt.Errorf("No such result with value [%d] exists", value)
+	}
+	return
 }

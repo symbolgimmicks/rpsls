@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/symbolgimmicks/rpsls/gameservicerouter"
+	GSR "github.com/symbolgimmicks/rpsls/gameservicerouter"
 )
 
 func handleRequests() {
@@ -23,10 +23,10 @@ func handleRequests() {
 	flag.Parse()
 	router.PathPrefix("/Sandbox/").Handler(http.StripPrefix("/Sandbox/", http.FileServer(http.Dir(dir))))
 
-	router.HandleFunc("/choices/{id:[0-9]+}", gameservicerouter.OnGetSingleChoice)
-	router.HandleFunc("/choice", gameservicerouter.OnGetRandomChoice).Methods("GET")
-	router.HandleFunc("/choices", gameservicerouter.OnGetChoices).Methods("GET")
-	router.HandleFunc("/play", gameservicerouter.OnPlay).Methods("POST")
+	router.HandleFunc("/choices/{id:[0-9]+}", GSR.HandleGetSingleChoice)
+	router.HandleFunc("/choices", GSR.HandleGetChoices).Methods("GET")
+	router.HandleFunc("/choice", GSR.HandleGetRandomChoice).Methods("GET")
+	router.HandleFunc("/play", GSR.HandlePlay).Methods("POST")
 
 	//https: //www.thepolyglotdeveloper.com/2017/10/handling-cors-golang-web-application/
 	//https://golang.org/pkg/net/http/
