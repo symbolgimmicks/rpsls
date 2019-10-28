@@ -1,12 +1,10 @@
 package choice_test
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net/http/httptest"
-	"reflect"
 	"strconv"
 
 	"github.com/DATA-DOG/godog"
@@ -44,23 +42,14 @@ func (a *validateFeature) callValidChoices() (err error) {
 	return
 }
 
+//func (a *validateFeature) theResponseShouldMatchJson(body *gherkin.DocString) (err error) {
 func (a *validateFeature) theResponseShouldMatchJson(body *gherkin.DocString) (err error) {
-	var expected, actual interface{}
+	return errors.New("Not implemented")
+}
 
-	// re-encode expected response
-	// if err = json.Unmarshal([]byte(body.Content), &expected); err != nil {
-	// 	err = fmt.Errorf("Failed to unmarshal the expected JSON data: %v", err)
-	// } else
-	if err = json.Unmarshal(a.resp.Body.Bytes(), &actual); err != nil {
-		// re-encode actual response too
-		err = fmt.Errorf("Failed to unmarshal the actual JSON data: %v", err)
-	}
-
-	log.Printf("expected JSON: %v\r\nactual JSON: %v\r\n", expected, actual)
-
-	if !reflect.DeepEqual(expected, actual) {
-		// the matching may be adapted per different requirements.
-		err = errors.New(fmt.Sprintf("expected JSON does not match actual, %v vs. %v", expected, actual))
+func (a *validateFeature) theResponseShouldMatchString(content string) (err error) {
+	if actual := fmt.Sprintf("%v", a.lastValidChoices); content != actual {
+		err = errors.New(fmt.Sprintf("%v != %v", content, actual))
 	}
 
 	return
@@ -150,7 +139,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^there are these choices:$`, validateApi.thereAreTheseChoices)
 	s.Step(`^I call ValidChoices$`, validateApi.callValidChoices)
-	s.Step(`^the response should match:$`, validateApi.theResponseShouldMatchJson)
+	s.Step(`^the response should match the string: \"([^"]*)\"$`, validateApi.theResponseShouldMatchString)
 	s.Step(`^\"([^"]*)\" plays against \"([^"]*)\"$`, validateApi.lhsPlaysRhs)
 	s.Step(`^the play result is \"([^"]*)\"$`, validateApi.lastPlayResult)
 	s.Step(`^I set the active choice to \"([^"]*)\"$`, validateApi.setActiveChoice)

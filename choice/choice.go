@@ -26,30 +26,9 @@ func (lhs Choice) ties(rhs Choice) bool {
 }
 
 // Beats - Does this choice beat that choice?
-func (lhs Choice) beats(rhs Choice) bool {
-
-	log.Printf("[%v] VS [%v]!", lhs, rhs)
-	if lhs.ID == rock && (rhs.ID != lizard && rhs.ID != scissors) {
-		return false
-	}
-
-	if lhs.ID == paper && (rhs.ID != rock && rhs.ID != spock) {
-		return false
-	}
-
-	if lhs.ID == scissors && (rhs.ID != paper && rhs.ID != lizard) {
-		return false
-	}
-
-	if lhs.ID == lizard && (rhs.ID != spock && rhs.ID != paper) {
-		return false
-	}
-
-	if lhs.ID == spock && (rhs.ID != scissors && rhs.ID != rock) {
-		return false
-	}
-
-	return true
+func (lhs Choice) beats(rhs Choice) (answer bool) {
+	answer = !(lhs.ID == rock && (rhs.ID != lizard && rhs.ID != scissors)) && !(lhs.ID == paper && (rhs.ID != rock && rhs.ID != spock)) && !(lhs.ID == scissors && (rhs.ID != paper && rhs.ID != lizard)) && !(lhs.ID == lizard && (rhs.ID != spock && rhs.ID != paper)) && !(lhs.ID == spock && (rhs.ID != scissors && rhs.ID != rock))
+	return
 }
 
 // GamePlayResults - Map of results from Evaluate.
@@ -81,6 +60,7 @@ func ValidChoices() []Choice {
 }
 
 // EmptyChoice - the null choice
+// TODO: Better impl idea for Null pattern [https://medium.com/@georgios.chinis/start-with-the-null-object-bb3aeabf4b1c]
 var EmptyChoice Choice = Choices[0]
 
 func convertRollToIndex(roll RNG.RandomNumber) (index int) {

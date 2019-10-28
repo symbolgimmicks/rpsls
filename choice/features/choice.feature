@@ -13,10 +13,7 @@ Feature: Validate Random Number Generation Validation
             |4 | lizard|
             |5 | spock|
         When I call ValidChoices
-        Then the response should match: 
-        """
-        [{"id":1,"name":"Rock"},{"id":2,"name":"Paper"},{"id":3,"name":"Scissors"},{"id":4,"name":"Lizard"},{"id":5,"name":"Spock"}]
-        """
+        Then the response should match the string: "[{1 rock} {2 paper} {3 scissors} {4 lizard} {5 spock}]"
 
     Scenario: Validate Play
         When I set the active choice to "rock"
