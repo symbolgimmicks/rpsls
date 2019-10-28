@@ -70,26 +70,17 @@ func getChoiceByName(name string) (answer choice.Choice, err error) {
 }
 
 func (a *validateFeature) lhsPlaysRhs(lhsName string, rhsName string) (err error) {
-	err = nil
-
-	var lhsChoice = choice.EmptyChoice
-	lhsChoice, err = getChoiceByName(lhsName)
-
-	if lhsChoice == choice.EmptyChoice {
-		err = errors.New(fmt.Sprintf("LHS choice [%s] not found", lhsName))
-		return
+	var lhs choice.Choice
+	var rhs choice.Choice
+	if lhs, err = choice.NewByString(lhsName); err != nil {
+		err = fmt.Errorf("LHS choice not found (%v)", err)
+	} else if rhs, err = choice.NewByString(rhsName); err != nil {
+		err = fmt.Errorf("RHS choice not found (%v)", err)
+	} else if a.lastGameResult, err = lhs.Play(rhs); err != nil {
+		err = fmt.Errorf("Unexpected failure during game play (%v)", err)
+	} else {
+		log.Printf("%v vs %v => %d", lhs, rhs, a.lastGameResult)
 	}
-
-	var rhsChoice = choice.EmptyChoice
-	rhsChoice, err = getChoiceByName(rhsName)
-	if rhsChoice == choice.EmptyChoice {
-		err = errors.New(fmt.Sprintf("RHS choice [%s] not found", rhsName))
-		return
-	}
-
-	a.lastGameResult = choice.Evaluate(lhsChoice, rhsChoice)
-
-	log.Printf("%v vs %v => %d", lhsChoice, rhsChoice, a.lastGameResult)
 
 	return
 }
@@ -117,16 +108,16 @@ func (a *validateFeature) setActiveChoice(choice string) (err error) {
 
 func (a *validateFeature) playActiveChoiceAgainst(targetName string) (err error) {
 	err = nil
-	var target choice.Choice
-
-	if target, err = getChoiceByName(targetName); err == nil {
-		a.lastGameResult = choice.Evaluate(a.activeChoice, target)
-	} else {
+	if target, err := choice.NewByString(targetName); err != nil {
 		a.lastGameResult = -9999
+		err = fmt.Errorf("Unexpected failure during gameplay (%v)", err)
+	} else if a.lastGameResult, err = a.activeChoice.Play(target); err != nil {
+		a.lastGameResult = -9999
+		err = fmt.Errorf("Unexpected failure during gameplay (%v)", err)
+	} else {
+		log.Printf("[%v] PLAYS [%v]!!", a.activeChoice, target)
+		log.Printf("LAST GAME RESULT [%d]", a.lastGameResult)
 	}
-	log.Printf("[%v] PLAYS [%v]!!", a.activeChoice, target)
-
-	log.Printf("LAST GAME RESULT [%d]", a.lastGameResult)
 	return
 }
 

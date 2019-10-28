@@ -70,21 +70,23 @@ func HandlePlay(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var playerChoice PlayerChoice
 	var err error
-	if err = json.Unmarshal(reqBody, &playerChoice); err == nil {
-		if computerChoice, err := choice.GenerateRandom(); err == nil {
-			var roundResult int = choice.Evaluate(choice.Choices[playerChoice.Player], computerChoice)
-			var strResult string
-			strResult, err = choice.EvaluationAsString(roundResult)
-			results := PlayResponse{strResult, playerChoice.Player, computerChoice.ID}
-			w.Header().Set("Content-Type", "application/json")
-			err = json.NewEncoder(w).Encode(results)
+	if err = json.Unmarshal(reqBody, &playerChoice); err != nil {
+	} else if computer, err := choice.GenerateRandom(); err != nil {
+		err = fmt.Errorf("Unexpected failure getting random choice (%v)", err)
+	} else if player, err := choice.NewByID(playerChoice.Player); err != nil {
+		err = fmt.Errorf("Unexpected failure converting player choice (%v)", err)
+	} else if roundResult, err := player.Play(computer); err != nil {
+		err = fmt.Errorf("Unexpected failure playing game (%v)", err)
+	} else if strResult, err := choice.EvaluationAsString(roundResult); err == nil {
+		results := PlayResponse{strResult, playerChoice.Player, computer.ID}
+		w.Header().Set("Content-Type", "application/json")
+		if err = json.NewEncoder(w).Encode(results); err != nil {
+			err = fmt.Errorf("Unexpected failure encoding response (%v)", err)
+			log.Print(err)
 		}
 	}
 
-	if err != nil {
-		err = fmt.Errorf("Unexpected failure getting random choice: %w", err)
-		log.Print(err)
-	}
+	return
 }
 
 // HandleGetRandomChoice - Picks a choice

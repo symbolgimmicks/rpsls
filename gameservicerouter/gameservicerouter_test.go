@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -110,6 +111,15 @@ func (a *validateFeature) aGameResultWasReturned(except string) (err error) {
 	return
 }
 
+func (a *validateFeature) anyChoiceExcept(except string) (err error) {
+	if filter, err := choice.NewByString(except); err != nil {
+		err = fmt.Errorf("Unexpected failure testing game result (%v)", err)
+	} else if reflect.DeepEqual(a.lastChoiceReceived, filter) {
+		err = fmt.Errorf("[%v] == [%v]", a.lastChoiceReceived, filter)
+	}
+	return
+}
+
 func FeatureContext(s *godog.Suite) {
 	validateApi := &validateFeature{}
 
@@ -121,7 +131,7 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^I send a GET request to the \"([^"]*)\" endpoint$`, validateApi.sendGetToEndpoint)
 	s.Step(`^I send a GET request to the \"([^"]*)\" endpoint with id set to (\d+)$`, validateApi.sendGetToEndpointDirectIndex)
 	s.Step(`^I send a POST request to the \"([^"]*)\" endpoint$`, validateApi.sendPostToEndpoint)
-	s.Step(`^a choice other than \"([^"]*)\" is returned$`, validateApi.thereAreTheseChoices)
+	s.Step(`^a choice other than \"([^"]*)\" is returned$`, validateApi.anyChoiceExcept)
 	s.Step(`^the following choices are returned:$`, validateApi.theseChoicesAreReturned)
 	s.Step(`^I prepare the following JSON data for play:$`, validateApi.prepareJSONDataForPlay)
 	s.Step(`^a game result is returned$`, validateApi.aGameResultWasReturned)
