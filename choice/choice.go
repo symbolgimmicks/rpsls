@@ -2,6 +2,7 @@ package choice
 
 import (
 	"fmt"
+	"log"
 
 	RNG "github.com/symbolgimmicks/rpsls/randomnumber"
 )
@@ -26,10 +27,13 @@ func (lhs Choice) ties(rhs Choice) bool {
 
 // Beats - Does this choice beat that choice?
 func (lhs Choice) beats(rhs Choice) bool {
+
+	log.Printf("[%v] VS [%v]!", lhs, rhs)
 	if lhs.ID == rock && (rhs.ID != lizard && rhs.ID != scissors) {
 		return false
 	}
-	if lhs.ID == paper && (rhs.ID != rock && rhs.ID == spock) {
+
+	if lhs.ID == paper && (rhs.ID != rock && rhs.ID != spock) {
 		return false
 	}
 
@@ -57,12 +61,12 @@ var GamePlayResults = map[int]string{
 
 // Choices - users can only select these, although Empty isn't intended for usage.
 var Choices = []Choice{
-	{empty, "Empty"},       // Null
-	{rock, "Rock"},         // Crushes Lizard, Crushes Scissors
-	{paper, "Paper"},       // Covers Rock, Disproves Spock
-	{scissors, "Scissors"}, // Cut paper, Decaptitates Lizard
-	{lizard, "Lizard"},     // Poisons Spock, Eats Paper
-	{spock, "Spock"},       // Smashes Scissors, Vaporizes Rock
+	{empty, "empty"},       // Null
+	{rock, "rock"},         // Crushes Lizard, Crushes Scissors
+	{paper, "paper"},       // Covers Rock, Disproves Spock
+	{scissors, "scissors"}, // Cut paper, Decaptitates Lizard
+	{lizard, "lizard"},     // Poisons Spock, Eats Paper
+	{spock, "spock"},       // Smashes Scissors, Vaporizes Rock
 }
 
 // Min - Minimum valid choice
@@ -117,8 +121,11 @@ func EvaluationAsString(value int) (answer string, err error) {
 	err = nil
 	answer = "unknown"
 	var ok bool = false
+	log.Printf("Looking up %d", value)
 	if answer, ok = GamePlayResults[value]; !ok {
 		err = fmt.Errorf("No such result with value [%d] exists", value)
+	} else {
+		log.Printf("%d => %s", value, answer)
 	}
 	return
 }

@@ -15,91 +15,62 @@ Feature: Validate Random Number Generation Validation
         When I call ValidChoices
         Then the response should match: 
         """
-        {
-            [
-                {
-                "id" = "1"
-                "name = "rock"
-                },
-                {
-                "id" = "2"
-                "name = "paper"
-                },
-                {
-                "id" = "3"
-                "name = "scissors"
-                },
-                {
-                "id" = "4"
-                "name = "lizard"
-                },
-                {
-                "id" = "5"
-                "name = "spock"
-                },
-            ]
-        }
+        [{"id":1,"name":"Rock"},{"id":2,"name":"Paper"},{"id":3,"name":"Scissors"},{"id":4,"name":"Lizard"},{"id":5,"name":"Spock"}]
         """
-    
-    Scenario: Validate ties
-        When "rock" plays against "rock"
-        Then the play result is "tie"
-        When "paper" plays against "paper"
-        Then the play result is "tie"
-        When "scissors" plays against "scissors"
-        Then the play result is "tie"
-        When "lizard" plays against "lizard"
-        Then the play result is "tie"
-        When "spock" plays against "spock"
-        Then the play result is "tie"
 
     Scenario: Validate Play
         When I set the active choice to "rock"
-        And I play "paper"
-        Then the play result is "lose"
-        When I play "scissors"
+        And I play "scissors"
         Then the play result is "win"
         When I play "lizard"
         Then the play result is "win"
         When I play "spock"
         Then the play result is "lose"
-
+        When I play "paper"
+        Then the play result is "lose"
+        When I play "rock"
+        Then the play result is "tie"
         When I set the active choice to "paper"
         And I play "rock"
         Then the play result is "win"
+        When I play "spock"
+        Then the play result is "win"
         When I play "scissors"
         Then the play result is "lose"
         When I play "lizard"
         Then the play result is "lose"
-        When I play "spock"
-        Then the play result is "win"
-
+        When I play "paper"
+        Then the play result is "tie"
         When I set the active choice to "scissors"
-        And I play "rock"
-        Then the play result is "lose"
-        When I play "paper"
+        And I play "paper"
         Then the play result is "win"
         When I play "lizard"
         Then the play result is "win"
         When I play "spock"
         Then the play result is "lose"
-
-        When I set the active choice to "lizard"
-        And I play "rock"
+        When I play "rock"
         Then the play result is "lose"
+        When I play "scissors"
+        Then the play result is "tie"
+        When I set the active choice to "lizard"
+        And I play "spock"
+        Then the play result is "win"
         When I play "paper"
         Then the play result is "win"
         When I play "scissors"
         Then the play result is "lose"
-        When I play "spock"
-        Then the play result is "win"
-
+        When I play "rock"
+        Then the play result is "lose"
+        When I play "lizard"
+        Then the play result is "tie"
         When I set the active choice to "spock"
         And I play "rock"
         Then the play result is "win"
-        When I play "paper"
-        Then the play result is "lose"
         When I play "scissors"
         Then the play result is "win"
+        When I play "paper"
+        Then the play result is "lose"
         When I play "lizard"
         Then the play result is "lose"
+        When I play "spock"
+        Then the play result is "tie"

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http/httptest"
 	"reflect"
 	"strconv"
@@ -47,20 +48,22 @@ func (a *validateFeature) theResponseShouldMatchJson(body *gherkin.DocString) (e
 	var expected, actual interface{}
 
 	// re-encode expected response
-	if err = json.Unmarshal([]byte(body.Content), &expected); err != nil {
-		return
-	}
-
-	// re-encode actual response too
+	// if err = json.Unmarshal([]byte(body.Content), &expected); err != nil {
+	// 	err = fmt.Errorf("Failed to unmarshal the expected JSON data: %v", err)
+	// } else
 	if err = json.Unmarshal(a.resp.Body.Bytes(), &actual); err != nil {
-		return
+		// re-encode actual response too
+		err = fmt.Errorf("Failed to unmarshal the actual JSON data: %v", err)
 	}
 
-	// the matching may be adapted per different requirements.
+	log.Printf("expected JSON: %v\r\nactual JSON: %v\r\n", expected, actual)
+
 	if !reflect.DeepEqual(expected, actual) {
-		return fmt.Errorf("expected JSON does not match actual, %v vs. %v", expected, actual)
+		// the matching may be adapted per different requirements.
+		err = errors.New(fmt.Sprintf("expected JSON does not match actual, %v vs. %v", expected, actual))
 	}
-	return nil
+
+	return
 }
 
 func getChoiceByName(name string) (answer choice.Choice, err error) {
@@ -68,12 +71,12 @@ func getChoiceByName(name string) (answer choice.Choice, err error) {
 	answer = choice.EmptyChoice
 
 	for _, next := range choice.ValidChoices() {
-		if answer != choice.EmptyChoice && next.Name == name {
+		log.Printf("Next item: %v", next)
+		if answer == choice.EmptyChoice && next.Name == name {
 			answer = next
 			return
 		}
 	}
-
 	return
 }
 
@@ -96,6 +99,9 @@ func (a *validateFeature) lhsPlaysRhs(lhsName string, rhsName string) (err error
 	}
 
 	a.lastGameResult = choice.Evaluate(lhsChoice, rhsChoice)
+
+	log.Printf("%v vs %v => %d", lhsChoice, rhsChoice, a.lastGameResult)
+
 	return
 }
 
@@ -103,7 +109,7 @@ func (a *validateFeature) lastPlayResult(expected string) (err error) {
 	err = nil
 	var actual string
 
-	if actual, err = choice.EvaluationAsString(a.lastGameResult); err != nil {
+	if actual, err = choice.EvaluationAsString(a.lastGameResult); err == nil {
 		if actual != expected {
 			err = errors.New(fmt.Sprintf("Expected [%s]. Actual: [%s (%d)]", expected, actual, a.lastGameResult))
 		}
@@ -123,11 +129,15 @@ func (a *validateFeature) setActiveChoice(choice string) (err error) {
 func (a *validateFeature) playActiveChoiceAgainst(targetName string) (err error) {
 	err = nil
 	var target choice.Choice
-	if target, err = getChoiceByName(targetName); err != nil {
+
+	if target, err = getChoiceByName(targetName); err == nil {
 		a.lastGameResult = choice.Evaluate(a.activeChoice, target)
 	} else {
 		a.lastGameResult = -9999
 	}
+	log.Printf("[%v] PLAYS [%v]!!", a.activeChoice, target)
+
+	log.Printf("LAST GAME RESULT [%d]", a.lastGameResult)
 	return
 }
 

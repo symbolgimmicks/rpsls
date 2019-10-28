@@ -10,7 +10,7 @@ rpsls (Rock Paper Scissors Lizard Spock) is a Golang REST API learning adventure
 2. Validate your installation works
 3. Go get rpsls
 ``` bash
-go get https://github.com/symbolgimmicks/rpsls
+go get github.com/symbolgimmicks/rpsls
 ```
 4. Using openssl create TSL keys
 - See https://golangcode.com/basic-https-server-with-certificate/ for an example on how to generate a self-signed key.

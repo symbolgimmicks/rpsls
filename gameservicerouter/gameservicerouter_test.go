@@ -79,6 +79,9 @@ func (a *validateFeature) sendGetToEndpoint(endpoint string) (err error) {
 
 func (a *validateFeature) sendGetToEndpointDirectIndex(endpoint string, id int) (err error) {
 	err = nil
+	// url/choices/#
+	var target string = a.targetUrl + endpoint + strconv.Itoa(id)
+	_, err = sendGet(target, &a.lastChoiceListReceived)
 	return
 }
 
