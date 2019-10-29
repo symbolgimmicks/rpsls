@@ -20,14 +20,14 @@ go get github.com/symbolgimmicks/rpsls
 
 ### Test coverage
 - [x] randomnumber testing
-![RNG BAT](https://github.com/symbolgimmicks/images/randomnumberbat.png)
-![RNG 3rd Party Service BAT](https://github.com/symbolgimmicks/images/3rdpartyrngbat.png)
+![RNG BAT](https://github.com/symbolgimmicks/rpsls/blob/master/images/3rdpartyrngbat.png?raw=true)
+![RNG 3rd Party Service BAT](https://github.com/symbolgimmicks/rpsls/blob/master/images/3rdpartyrngbat.png?raw=true)
 - [x] choice testing
-![Choice BAT part 1](https://github.com/symbolgimmicks/images/choice1bat.png)
-![Choice BAT part 2](https://github.com/symbolgimmicks/images/choice2bat.png)
+![Choice BAT part 1](https://github.com/symbolgimmicks/rpsls/blob/master/images/choice1bat.png?raw=true)
+![Choice BAT part 2](https://github.com/symbolgimmicks/rpsls/blob/master/images/choice2bat.png?raw=true)
 - [x] gameservicerouter testing
-![GameService BAT part 1](https://github.com/symbolgimmicks/images/gameservice1bat.png)
-![GameService BAT part 2](https://github.com/symbolgimmicks/images/gameservice2bat.png)
+![GameService BAT part 1](https://github.com/symbolgimmicks/rpsls/blob/master/images/gameservice1bat.png?raw=true)
+![GameService BAT part 2](https://github.com/symbolgimmicks/rpsls/blob/master/images/gameservice2bat.png?raw=true)
 
 
 ## Usage
