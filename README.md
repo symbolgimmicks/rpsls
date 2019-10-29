@@ -20,8 +20,8 @@ go get github.com/symbolgimmicks/rpsls
 
 ### Test coverage
 - [x] randomnumber testing
-![RNG BAT](https://github.com/symbolgimmicks/images/
-![RNG 3rd Party Service BAT](https://github.com/symbolgimmicks/images/randomnumberbat.png)
+![RNG BAT](https://github.com/symbolgimmicks/images/randomnumberbat.png)
+![RNG 3rd Party Service BAT](https://github.com/symbolgimmicks/images/3rdpartyrngbat.png)
 - [x] choice testing
 ![Choice BAT part 1](https://github.com/symbolgimmicks/images/choice1bat.png)
 ![Choice BAT part 2](https://github.com/symbolgimmicks/images/choice2bat.png)
