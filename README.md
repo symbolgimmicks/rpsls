@@ -21,8 +21,8 @@ go get github.com/symbolgimmicks/rpsls
 ### Test coverage
 - [x] randomnumber testing
 - [x] choice testing
-- [ ] gameservicerouter testing (stubbed, 50% done)
-- [ ] main testing
+- [x] gameservicerouter testing
+- [x] main testing
 
 ## Usage
 The application attempts to host on port 4077 and is intended to provide the following REST API:
@@ -70,6 +70,7 @@ Result: application/json
 }
 ```
 ## Acknowledgment
+
 - https://github.com/gorilla/mux
 - https://github.com/gorilla/handler
 - https://gist.github.com/denji/12b3a568f092ab951456
@@ -87,5 +88,8 @@ Result: application/json
 - https://www.tecmint.com/install-go-in-linux/
 - https://golang.org/wiki/SettingGOPATH
 - https://github.com/DATA-DOG/godog/tree/master/examples/api
-	
+- https://github.com/Originate/guide/blob/master/cucumber.md
+- https://stackoverflow.com/questions/29164375/correct-way-to-initialize-empty-slice
+- https://stackoverflow.com/questions/24455147/how-do-i-send-a-json-string-in-a-post-request-in-go
+- https://guides.github.com/features/mastering-markdown/
 ## License

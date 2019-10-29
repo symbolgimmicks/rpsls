@@ -58,3 +58,48 @@ Feature: Validate the Game Service Router
         Then a choice other than "empty" is returned
         When I send a POST request to the "/play" endpoint
         Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
+
+        When I send a GET request to the "/choice" endpoint
+        Then a choice other than "empty" is returned
+        When I send a POST request to the "/play" endpoint
+        Then a game result is returned
