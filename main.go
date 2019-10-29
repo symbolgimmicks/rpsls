@@ -19,10 +19,11 @@ func handleRequests() {
 	// So instead trying this approach...
 	//https://github.com/gorilla/mux#static-files
 	var dir string
-	flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
+	flag.StringVar(&dir, "dir", "./Sandbox", "the directory to serve files from. Defaults to the current dir")
 	flag.Parse()
 	router.PathPrefix("/Sandbox/").Handler(http.StripPrefix("/Sandbox/", http.FileServer(http.Dir(dir))))
 
+	router.HandleFunc("/", GSR.UI)
 	router.HandleFunc("/choices/{id:[0-9]+}", GSR.HandleGetSingleChoice)
 	router.HandleFunc("/choices", GSR.HandleGetChoices).Methods("GET")
 	router.HandleFunc("/choice", GSR.HandleGetRandomChoice).Methods("GET")

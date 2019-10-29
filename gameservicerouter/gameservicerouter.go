@@ -1,6 +1,7 @@
 package gameservicerouter
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -105,4 +106,14 @@ func HandleGetRandomChoice(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 	}
 	return
+}
+
+// UI - host temp ui
+func UI(w http.ResponseWriter, r *http.Request) {
+	//https://gobyexample.com/reading-files
+	if dat, err := ioutil.ReadFile("Sandbox/ui.html"); err == nil {
+		fmt.Fprint(w, bytes.NewBuffer(dat).String())
+	} else {
+		fmt.Print(string(dat))
+	}
 }
