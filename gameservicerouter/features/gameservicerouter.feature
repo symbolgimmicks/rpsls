@@ -3,7 +3,7 @@ Feature: Validate the Game Service Router
     As a developer
     I need to create a game service
 
-    Scenario: Handle /choice GET request
+    Scenario: Handle /choice GET request to generate a random choice
         Given I set the target URL to "https://localhost:4077"
         When I send a GET request to the "/choice" endpoint
         Then a choice other than "empty" is returned

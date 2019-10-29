@@ -93,11 +93,13 @@ func HandlePlay(w http.ResponseWriter, r *http.Request) {
 func HandleGetRandomChoice(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var answer choice.Choice
+	fmt.Println("Getting random choice for a user...")
 	if answer, err = choice.GenerateRandom(); err == nil {
 		w.Header().Set("Content-Type", "application/json")
-		err = json.NewEncoder(w).Encode(answer)
+		if err = json.NewEncoder(w).Encode(answer); err == nil {
+			fmt.Println(fmt.Sprintf("returning [%v]", answer))
+		}
 	}
-
 	if err != nil {
 		err = fmt.Errorf("Unexpected failure getting random choice: %w", err)
 		log.Print(err)

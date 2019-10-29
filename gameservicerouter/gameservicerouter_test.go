@@ -1,6 +1,7 @@
 package gameservicerouter_test
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,20 +16,29 @@ import (
 	"github.com/DATA-DOG/godog"
 )
 
-var myClient = &http.Client{Timeout: 15 * time.Second}
-
 type validateFeature struct {
 	resp                   *httptest.ResponseRecorder
 	targetUrl              string
 	jsonData               []byte
 	lastChoiceReceived     choice.Choice
 	lastChoiceListReceived []choice.Choice
+	myClient               *http.Client
+	lastThingReceived      interface{}
 }
 
 func (a *validateFeature) reset() {
 	a.resp = httptest.NewRecorder()
-	a.lastChoiceReceived = choice.EmptyChoice
+	a.lastChoiceReceived, _ = choice.NewByID(0)
 	a.targetUrl = ""
+
+	// JJB - Apparently, signing is a problem so learn this later
+	// but hack it for now?
+	//https://github.com/andygrunwald/go-jira/issues/52
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	a.myClient = &http.Client{Timeout: 15 * time.Second, Transport: tr}
 }
 
 func (a *validateFeature) setUrl(url string) (err error) {
@@ -37,8 +47,10 @@ func (a *validateFeature) setUrl(url string) (err error) {
 	return
 }
 
-func sendGet(targetUrl string, v interface{}) (resp *http.Response, err error) {
-	if resp, err := myClient.Get(targetUrl); err != nil {
+func (a *validateFeature) sendGet(endpoint string) (resp *http.Response, err error) {
+	var url string = a.targetUrl + endpoint
+	fmt.Println("Sending request to [" + url + "]")
+	if resp, err := a.myClient.Get(url); err != nil {
 	} else {
 		defer func() {
 			switch t := recover().(type) {
@@ -50,8 +62,38 @@ func sendGet(targetUrl string, v interface{}) (resp *http.Response, err error) {
 		}()
 
 		defer resp.Body.Close()
-		err = json.NewDecoder(resp.Body).Decode(&v)
+		if err = json.NewDecoder(resp.Body).Decode(&a.lastThingReceived); err != nil {
+			fmt.Println(fmt.Errorf("Failed to decode response (%v)", err))
+		} else {
+			fmt.Println(fmt.Sprintf("Received: [%v]", a.lastThingReceived))
+		}
 	}
+
+	return
+}
+
+func (a *validateFeature) sendGetForRandomChoice(targetUrl string) (resp *http.Response, err error) {
+	fmt.Println("Sending request to [" + targetUrl + "]")
+	a.lastChoiceReceived = choice.EmptyChoice
+	if resp, err := a.myClient.Get(targetUrl); err != nil {
+		fmt.Println(fmt.Errorf("Failed to get a response (%v)", err))
+	} else {
+		defer func() {
+			switch t := recover().(type) {
+			case string:
+				err = fmt.Errorf(t)
+			case error:
+				err = t
+			}
+		}()
+		defer resp.Body.Close()
+		if err = json.NewDecoder(resp.Body).Decode(&a.lastChoiceReceived); err != nil {
+			fmt.Println(fmt.Errorf("Failed to decode response (%v)", err))
+		} else {
+			fmt.Println(fmt.Sprintf("Received: [%v]", a.lastChoiceReceived))
+		}
+	}
+
 	return
 }
 
@@ -60,14 +102,18 @@ func (a *validateFeature) sendGetToEndpoint(endpoint string) (err error) {
 	switch {
 	case endpoint == "/choice":
 		{
-			_, err = sendGet(a.targetUrl+endpoint, &a.lastChoiceReceived)
+			if resp, err := a.sendGet(endpoint); err != nil {
+				fmt.Println(fmt.Sprintf("Receieved [%v]", a.lastThingReceived))
+			} else {
+				fmt.Printf(fmt.Sprintf("Failed to get a response (%v): %v", err.Error(), resp))
+			}
 			break
 		}
 	case strings.HasPrefix(endpoint, "/choices/"):
 		{
 			var parts []string = strings.Split(endpoint, "/")
 			if _, err = strconv.Atoi(parts[len(parts)-1]); err == nil {
-				_, err = sendGet(a.targetUrl+endpoint, &a.lastChoiceListReceived)
+				_, err = a.sendGet(endpoint)
 			}
 			break
 		}
@@ -79,10 +125,9 @@ func (a *validateFeature) sendGetToEndpoint(endpoint string) (err error) {
 }
 
 func (a *validateFeature) sendGetToEndpointDirectIndex(endpoint string, id int) (err error) {
-	err = nil
-	// url/choices/#
-	var target string = a.targetUrl + endpoint + strconv.Itoa(id)
-	_, err = sendGet(target, &a.lastChoiceListReceived)
+	if resp, err := a.sendGet(endpoint + strconv.Itoa(id)); err != nil {
+		fmt.Printf(fmt.Sprintf("Failed to get a response (%v): %v", err.Error(), resp))
+	}
 	return
 }
 
@@ -112,10 +157,13 @@ func (a *validateFeature) aGameResultWasReturned(except string) (err error) {
 }
 
 func (a *validateFeature) anyChoiceExcept(except string) (err error) {
-	if filter, err := choice.NewByString(except); err != nil {
+	var filter choice.Choice
+	if filter, err = choice.NewByString(except); err != nil {
 		err = fmt.Errorf("Unexpected failure testing game result (%v)", err)
 	} else if reflect.DeepEqual(a.lastChoiceReceived, filter) {
 		err = fmt.Errorf("[%v] == [%v]", a.lastChoiceReceived, filter)
+	} else {
+		fmt.Printf("[%v] != [%v]", a.lastChoiceReceived, filter)
 	}
 	return
 }

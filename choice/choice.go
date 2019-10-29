@@ -67,7 +67,7 @@ var EmptyChoice Choice = Choices[0]
 func NewByString(byName string) (answer Choice, err error) {
 	err = nil
 	answer = EmptyChoice
-	for _, next := range ValidChoices() {
+	for _, next := range Choices {
 		log.Printf("Next item: %v", next)
 		if next.Name == byName {
 			answer = next
@@ -79,24 +79,24 @@ func NewByString(byName string) (answer Choice, err error) {
 }
 
 // NewByID - Factory method convert from int id
-func NewByID(byId int) (answer Choice, err error) {
+func NewByID(byID int) (answer Choice, err error) {
 	err = nil
 	answer = EmptyChoice
-	for _, next := range ValidChoices() {
+	for _, next := range Choices {
 		log.Printf("Next item: %v", next)
-		if next.ID == byId {
+		if next.ID == byID {
 			answer = next
 			return
 		}
 	}
-	err = fmt.Errorf("no choice with id [%d] exists", byId)
+	err = fmt.Errorf("no choice with id [%d] exists", byID)
 	return
 }
 
 // New - Factory method convert from string name
 func (lhs *Choice) New(byName string) (err error) {
 	err = nil
-	for _, next := range ValidChoices() {
+	for _, next := range Choices {
 		log.Printf("Next item: %v", next)
 		if next.Name == byName {
 			lhs.ID = next.ID
@@ -140,20 +140,6 @@ func GenerateRandom() (answer Choice, err error) {
 	}
 	return
 }
-
-// Evaluate - returns the result of playing two choices.
-// -1 = lhs won
-// 0 = tie
-// 1 = rhs won
-// func Evaluate(lhs Choice, rhs Choice) int {
-// 	if lhs.ties(rhs) {
-// 		return 0
-// 	}
-// 	if lhs.beats(rhs) {
-// 		return -1
-// 	}
-// 	return 1
-// }
 
 // EvaluationAsString - Converts the value of Evalute into  a string
 func EvaluationAsString(value int) (answer string, err error) {
