@@ -20,9 +20,15 @@ go get github.com/symbolgimmicks/rpsls
 
 ### Test coverage
 - [x] randomnumber testing
+![RNG BAT](https://github.com/symbolgimmicks/images/
+![RNG 3rd Party Service BAT](https://github.com/symbolgimmicks/images/randomnumberbat.png)
 - [x] choice testing
+![Choice BAT part 1](https://github.com/symbolgimmicks/images/choice1bat.png)
+![Choice BAT part 2](https://github.com/symbolgimmicks/images/choice2bat.png)
 - [x] gameservicerouter testing
-- [x] main testing
+![GameService BAT part 1](https://github.com/symbolgimmicks/images/gameservice1bat.png)
+![GameService BAT part 2](https://github.com/symbolgimmicks/images/gameservice2bat.png)
+
 
 ## Usage
 The application attempts to host on port 4077 and is intended to provide the following REST API:
