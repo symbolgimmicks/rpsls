@@ -1,6 +1,7 @@
 import React from 'react';
 import './GameButton.css';
 
+var lastSelectedId = 0;
 //https://www.tutorialspoint.com/reactjs/reactjs_environment_setup.htm
 //localhost:3000
 //https://github.com/facebook/create-react-app
@@ -12,45 +13,10 @@ export class ChoiceButton extends React.Component {
   
     render() {
       return React.createElement(
-        'button',
-        { onClick: () => this.setState( { picked: true } ) }
-        ,this.state.name
+        'button'
+        ,{ onClick: () => {this.setState( { picked: true } ); lastSelectedId = this.props.id; console.log("last selected: ", lastSelectedId)} }
+        ,this.props.name
       );
-    }
-  }
-  
-  export class rockButton extends ChoiceButton {
-    constructor(props) {
-      super(props);
-      this.state =  { name: "rock"}
-    }
-  }
-  
-  export class paperButton extends ChoiceButton {
-    constructor(props) {
-      super(props);
-      this.state =  { name: "paper"}
-    }
-  }
-  
-  export class scissorsButton extends ChoiceButton {
-    constructor(props) {
-      super(props);
-      this.state =  { name: "scissors"}
-    }
-  }
-  
-  export class lizardButton extends ChoiceButton {
-    constructor(props) {
-      super(props);
-      this.state =  { name: "lizard"}
-    }
-  }
-  
-  export class spockButton extends ChoiceButton {
-    constructor(props) {
-      super(props);
-      this.state =  { name: "spock"}
     }
   }
   
@@ -70,12 +36,7 @@ export class ChoiceButton extends React.Component {
       }).then( data => {
         console.log("Results: ", data)
         let options = data.map((option) => {
-          return (
-            // format your returned data into a map to use for rendering later.
-            
-            //React.createElement("div",{value: option.id, id:option.name+"_button"},)
-                (<div id= {option.name}>{option.name}</div>)
-            );
+            return <ChoiceButton name={option.name} id={option.id} key={option.id} />
         })
           this.setState({menu : options});
           console.log("state", this.state.menu)
@@ -83,10 +44,7 @@ export class ChoiceButton extends React.Component {
     }
     render () {
       console.log(this)
-      return (
-        this.state.menu
-        // tODO This is where you might make the menu items.
-      );
+      return (this.state.menu);
     }
   }
 
