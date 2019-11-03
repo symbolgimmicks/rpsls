@@ -4,7 +4,7 @@ import './GameButton.css';
 //https://www.tutorialspoint.com/reactjs/reactjs_environment_setup.htm
 //localhost:3000
 //https://github.com/facebook/create-react-app
-class ChoiceButton extends React.Component {
+export class ChoiceButton extends React.Component {
     constructor(props) {
       super(props);
       this.state = { picked: false, name: "none"};
@@ -19,35 +19,35 @@ class ChoiceButton extends React.Component {
     }
   }
   
-  class RockButton extends ChoiceButton {
+  export class rockButton extends ChoiceButton {
     constructor(props) {
       super(props);
       this.state =  { name: "rock"}
     }
   }
   
-  class PaperButton extends ChoiceButton {
+  export class paperButton extends ChoiceButton {
     constructor(props) {
       super(props);
       this.state =  { name: "paper"}
     }
   }
   
-  class ScissorsButton extends ChoiceButton {
+  export class scissorsButton extends ChoiceButton {
     constructor(props) {
       super(props);
       this.state =  { name: "scissors"}
     }
   }
   
-  class LizardButton extends ChoiceButton {
+  export class lizardButton extends ChoiceButton {
     constructor(props) {
       super(props);
       this.state =  { name: "lizard"}
     }
   }
   
-  class SpockButton extends ChoiceButton {
+  export class spockButton extends ChoiceButton {
     constructor(props) {
       super(props);
       this.state =  { name: "spock"}
@@ -56,12 +56,10 @@ class ChoiceButton extends React.Component {
   
   // You must select a decision...
   // Reference - https://selectadecision.info/woods.html
-  class SelectADecision extends React.Component {
+  export class SelectADecision extends React.Component {
     constructor(props) {
       super(props);
       this.state = { picked: false, menu: []};
-  
-  
     }
   
     //https://blog.hellojs.org/fetching-api-data-with-react-js-460fe8bbf8f2
@@ -71,25 +69,25 @@ class ChoiceButton extends React.Component {
         return results.json();
       }).then( data => {
         console.log("Results: ", data)
-          let options = data.map((option) => {
-            return (
-              
-              //React.createElement("div",{value: option.id, id:option.name+"_button"},)
-                  (<div id= {option.name}>{option.name}</div>)
-              );
-          })
+        let options = data.map((option) => {
+          return (
+            // format your returned data into a map to use for rendering later.
+            
+            //React.createElement("div",{value: option.id, id:option.name+"_button"},)
+                (<div id= {option.name}>{option.name}</div>)
+            );
+        })
           this.setState({menu : options});
           console.log("state", this.state.menu)
         })
     }
     render () {
+      console.log(this)
       return (
         this.state.menu
-        //this.state.menu
-        //console.log(this)
-        //this.parent.createElement("div",this.props,this.state.menu)
+        // tODO This is where you might make the menu items.
       );
     }
   }
 
-  export default ChoiceButton
+  export default ChoiceButton 

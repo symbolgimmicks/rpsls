@@ -1,6 +1,7 @@
 {
   "name": "rpsls-app",
   "version": "0.1.0",
+  "main": "App.jsx",
   "private": true,
   "dependencies": {
     "react": "^16.11.0",
